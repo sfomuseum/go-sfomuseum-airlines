@@ -5,11 +5,11 @@ import (
 )
 
 type Airline struct {
-	IATA      string
-	ICAO      string
+	IATA      string // 2-letter code
+	ICAO      string // 3-letter code
 	TELEPHONY string
 	Name      string
-	Duplicate bool		// IATA, this should probably be renamed
+	Duplicate bool // IATA, this should probably be renamed
 }
 
 func (a *Airline) String() string {

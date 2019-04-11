@@ -128,7 +128,8 @@ LD,AHK,AIR HONG KONG,Air_Hong_Kong,Air Hong Kong
 ,ADC,ATLAN-DOMINICAN,Air_Atlantic_Dominicana,Air Atlantic Dominicana
 ,ADW,AIR ANDAMAN,Air_Andaman,Air Andaman
 UX,AEA,EUROPA,Air_Europa,Air Europa
-IG,AEY,AIR ITALY,Air_Italy,Air Italy
+IG,AEY,AIR ITALY,Air_Italy_(2005–2018),Air Italy
+IG,ISS,AIR ITALY,Air_Italy,Air Italy
 ,ASW,AIRSOUTHWEST,Air_Southwest_Ltd.,Air Southwest Ltd.
 ,ASX,AIRSPEC,Air_Special,Air Special
 NX,AMU,AIR MACAO,Air_Macau,Air Macau

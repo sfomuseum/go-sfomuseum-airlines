@@ -1,9 +1,10 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
-	"github.com/sfomuseum/go-sfomuseum-airlines"
+	"github.com/sfomuseum/go-sfomuseum-airlines"	
 	"github.com/sfomuseum/go-sfomuseum-airlines/sfomuseum"
 	"github.com/sfomuseum/go-sfomuseum-airlines/wikipedia"
 	"log"
@@ -14,7 +15,7 @@ func main() {
 	source := flag.String("source", "wikipedia", "Valid sources are: sfomuseum, wikipedia.")
 	flag.Parse()
 
-	var lookup aircraft.Lookup
+	var lookup airlines.Lookup
 	var err error
 
 	switch *source {

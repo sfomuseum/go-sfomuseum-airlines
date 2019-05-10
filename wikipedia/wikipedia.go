@@ -12,6 +12,18 @@ import (
 	"sync"
 )
 
+type Airline struct {
+	IATA      string // 2-letter code
+	ICAO      string // 3-letter code
+	TELEPHONY string
+	Name      string
+	Duplicate bool // IATA, this should probably be renamed
+}
+
+func (a *Airline) String() string {
+	return fmt.Sprintf("%s %s %s", a.IATA, a.ICAO, a.TELEPHONY)
+}
+
 var lookup_table *sync.Map
 var lookup_init sync.Once
 
@@ -19,7 +31,7 @@ type WikipediaLookup struct {
 	airlines.Lookup
 }
 
-func NewWikipediaLookup() (airlines.Lookup, error) {
+func NewLookup() (airlines.Lookup, error) {
 
 	var lookup_err error
 
@@ -120,7 +132,7 @@ func NewWikipediaLookup() (airlines.Lookup, error) {
 	return &l, nil
 }
 
-func (l *WikipediaLookup) Find(code string) ([]*Airline, error) {
+func (l *WikipediaLookup) Find(code string) ([]interface{}, error) {
 
 	pointers, ok := lookup_table.Load(code)
 
@@ -128,7 +140,7 @@ func (l *WikipediaLookup) Find(code string) ([]*Airline, error) {
 		return nil, errors.New("Not found")
 	}
 
-	airlines := make([]*Airline, 0)
+	airlines := make([]interface{}, 0)
 
 	for _, p := range pointers.([]string) {
 

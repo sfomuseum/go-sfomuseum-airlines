@@ -2,8 +2,11 @@ package sfomuseum
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/sfomuseum/go-sfomuseum-airlines"
 	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -18,7 +21,7 @@ type Airline struct {
 }
 
 func (a *Airline) String() string {
-	return fmt.Sprintf("%s %s %s \"%s\" %d", a.WOFID, a.Name, a.IATACode, a.ICAOCode, a.ICAOCallsign, a.Name, a.WOFID)
+	return fmt.Sprintf("%s %s %s \"%s\" %d", a.IATACode, a.ICAOCode, a.ICAOCallsign, a.Name, a.WOFID)
 }
 
 var lookup_table *sync.Map
@@ -53,9 +56,9 @@ func NewLookup() (airlines.Lookup, error) {
 			str_wofid := strconv.FormatInt(craft.WOFID, 10)
 
 			possible_codes := []string{
-				craft.ICAOCode,
 				craft.IATACode,
-				craft.IATACallsign,
+				craft.ICAOCode,
+				craft.ICAOCallsign,
 				str_wofid,
 			}
 

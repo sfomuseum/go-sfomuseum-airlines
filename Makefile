@@ -9,6 +9,7 @@ self:   prep rmdeps
 	mkdir -p src/github.com/sfomuseum/go-sfomuseum-airlines
 	cp *.go src/github.com/sfomuseum/go-sfomuseum-airlines/
 	cp -r sfomuseum src/github.com/sfomuseum/go-sfomuseum-airlines/
+	cp -r wikipedia src/github.com/sfomuseum/go-sfomuseum-airlines/
 	cp -r vendor/* src/
 
 rmdeps:
@@ -30,6 +31,7 @@ fmt:
 	go fmt *.go
 	go fmt cmd/*.go
 	go fmt sfomuseum/*.go
+	go fmt wikipedia/*.go
 
 bin: 	self
 	rm -rf bin/*

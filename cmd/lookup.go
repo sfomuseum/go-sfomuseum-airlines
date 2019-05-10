@@ -4,14 +4,27 @@ import (
 	"flag"
 	"fmt"
 	"github.com/sfomuseum/go-sfomuseum-airlines"
+	"github.com/sfomuseum/go-sfomuseum-airlines/sfomuseum"
+	"github.com/sfomuseum/go-sfomuseum-airlines/wikipedia"
 	"log"
 )
 
 func main() {
 
+	source := flag.String("source", "wikipedia", "Valid sources are: sfomuseum, wikipedia.")
 	flag.Parse()
 
-	a, err := airlines.NewLookup()
+	var lookup aircraft.Lookup
+	var err error
+
+	switch *source {
+	case "sfomuseum":
+		lookup, err = sfomuseum.NewLookup()
+	case "wikipedia":
+		lookup, err = wikipedia.NewLookup()
+	default:
+		err = errors.New("Unknown source")
+	}
 
 	if err != nil {
 		log.Fatal(err)
@@ -19,14 +32,14 @@ func main() {
 
 	for _, code := range flag.Args() {
 
-		airlines, err := a.Find(code)
+		results, err := lookup.Find(code)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		for _, a := range airlines {
-			fmt.Println(a, a.Name)
+		for _, a := range results {
+			fmt.Println(a)
 		}
 	}
 

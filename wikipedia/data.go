@@ -1,4 +1,4 @@
-package airlines
+package wikipedia
 
 // if you're reading this it means the data below comes from:
 // https://github.com/sfomuseum-data/sfomuseum-data-enterprise/blob/master/utils/python/wikipedia-airline-codes

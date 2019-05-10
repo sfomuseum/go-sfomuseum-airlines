@@ -1,9 +1,10 @@
-package airlines
+package wikipedia
 
 import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/sfomuseum/go-sfomuseum-airlines"
 	"github.com/whosonfirst/go-whosonfirst-csv"
 	"io"
 	_ "log"
@@ -14,11 +15,11 @@ import (
 var lookup_table *sync.Map
 var lookup_init sync.Once
 
-type Lookup struct {
-	// we used to store the lookup_table here but then switched to sync.Once-ing
+type WikipediaLookup struct {
+	airlines.Lookup
 }
 
-func NewLookup() (*Lookup, error) {
+func NewWikipediaLookup() (airlines.Lookup, error) {
 
 	var lookup_err error
 
@@ -115,11 +116,11 @@ func NewLookup() (*Lookup, error) {
 		return nil, lookup_err
 	}
 
-	l := Lookup{}
+	l := WikipediaLookup{}
 	return &l, nil
 }
 
-func (l *Lookup) Find(code string) ([]*Airline, error) {
+func (l *WikipediaLookup) Find(code string) ([]*Airline, error) {
 
 	pointers, ok := lookup_table.Load(code)
 

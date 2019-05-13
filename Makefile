@@ -8,6 +8,7 @@ self:   prep rmdeps
 	if test -d src; then rm -rf src; fi
 	mkdir -p src/github.com/sfomuseum/go-sfomuseum-airlines
 	cp *.go src/github.com/sfomuseum/go-sfomuseum-airlines/
+	cp -r flysfo src/github.com/sfomuseum/go-sfomuseum-airlines/
 	cp -r sfomuseum src/github.com/sfomuseum/go-sfomuseum-airlines/
 	cp -r wikipedia src/github.com/sfomuseum/go-sfomuseum-airlines/
 	cp -r vendor/* src/
@@ -30,6 +31,7 @@ vendor-deps: rmdeps deps
 fmt:
 	go fmt *.go
 	go fmt cmd/*.go
+	go fmt flysfo/*.go
 	go fmt sfomuseum/*.go
 	go fmt wikipedia/*.go
 

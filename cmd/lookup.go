@@ -4,7 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/sfomuseum/go-sfomuseum-airlines"	
+	"github.com/sfomuseum/go-sfomuseum-airlines"
 	"github.com/sfomuseum/go-sfomuseum-airlines/sfomuseum"
 	"github.com/sfomuseum/go-sfomuseum-airlines/wikipedia"
 	"log"

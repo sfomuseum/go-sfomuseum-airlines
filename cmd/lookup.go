@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/sfomuseum/go-sfomuseum-airlines"
+	"github.com/sfomuseum/go-sfomuseum-airlines/flysfo"	
 	"github.com/sfomuseum/go-sfomuseum-airlines/sfomuseum"
 	"github.com/sfomuseum/go-sfomuseum-airlines/wikipedia"
 	"log"
@@ -12,13 +13,15 @@ import (
 
 func main() {
 
-	source := flag.String("source", "wikipedia", "Valid sources are: sfomuseum, wikipedia.")
+	source := flag.String("source", "wikipedia", "Valid sources are: flysfo,sfomuseum,wikipedia.")
 	flag.Parse()
 
 	var lookup airlines.Lookup
 	var err error
 
 	switch *source {
+	case "flysfo":
+		lookup, err = flysfo.NewLookup()
 	case "sfomuseum":
 		lookup, err = sfomuseum.NewLookup()
 	case "wikipedia":

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/flysfo/go-flysfo-airlines"
+	"github.com/sfomuseum/go-sfomuseum-airlines"
 	"strconv"
 	"strings"
 	"sync"
@@ -18,7 +18,7 @@ type Airline struct {
 }
 
 func (a *Airline) String() string {
-	return fmt.Sprintf("%s %s %s \"%s\" %d", a.IATACode, a.ICAOCode, a.ICAOCallsign, a.Name, a.WOFID)
+	return fmt.Sprintf("%s \"%s\" %d", a.IATACode, a.Name, a.WOFID)
 }
 
 var lookup_table *sync.Map

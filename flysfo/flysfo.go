@@ -15,10 +15,11 @@ type Airline struct {
 	Name     string `json:"wof:name"`
 	FlysfoID int    `json:"flysfo:airline_id"`
 	IATACode string `json:"iata:code,omitempty"`
+	ICAOCode string `json:"icao:code,omitempty"`	
 }
 
 func (a *Airline) String() string {
-	return fmt.Sprintf("%s \"%s\" %d", a.IATACode, a.Name, a.WOFID)
+	return fmt.Sprintf("%s %s \"%s\" %d", a.IATACode, a.ICAOCode, a.Name, a.WOFID)
 }
 
 var lookup_table *sync.Map
@@ -54,6 +55,7 @@ func NewLookup() (airlines.Lookup, error) {
 
 			possible_codes := []string{
 				craft.IATACode,
+				craft.ICAOCode,				
 				str_wofid,
 			}
 

@@ -15,7 +15,7 @@ type Airline struct {
 	Name     string `json:"wof:name"`
 	FlysfoID int    `json:"flysfo:airline_id"`
 	IATACode string `json:"iata:code,omitempty"`
-	ICAOCode string `json:"icao:code,omitempty"`	
+	ICAOCode string `json:"icao:code,omitempty"`
 }
 
 func (a *Airline) String() string {
@@ -55,7 +55,7 @@ func NewLookup() (airlines.Lookup, error) {
 
 			possible_codes := []string{
 				craft.IATACode,
-				craft.ICAOCode,				
+				craft.ICAOCode,
 				str_wofid,
 			}
 

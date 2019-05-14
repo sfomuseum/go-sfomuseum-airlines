@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/sfomuseum/go-sfomuseum-airlines"
-	"github.com/sfomuseum/go-sfomuseum-airlines/flysfo"	
+	"github.com/sfomuseum/go-sfomuseum-airlines/flysfo"
 	"github.com/sfomuseum/go-sfomuseum-airlines/sfomuseum"
 	"github.com/sfomuseum/go-sfomuseum-airlines/wikipedia"
 	"log"
@@ -39,7 +39,8 @@ func main() {
 		results, err := lookup.Find(code)
 
 		if err != nil {
-			log.Fatal(err)
+			fmt.Printf("%s *** %s\n", code, err)
+			continue
 		}
 
 		for _, a := range results {

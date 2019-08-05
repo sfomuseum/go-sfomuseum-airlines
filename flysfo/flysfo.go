@@ -112,7 +112,8 @@ func (l *FlysfoLookup) Find(code string) ([]interface{}, error) {
 	pointers, ok := lookup_table.Load(code)
 
 	if !ok {
-		return nil, errors.New("Not found")
+		msg := fmt.Sprintf("code '%s' not found", code)
+		return nil, errors.New(msg)
 	}
 
 	airline := make([]interface{}, 0)

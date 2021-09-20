@@ -1,6 +1,7 @@
 package sfomuseum
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -16,14 +17,19 @@ var lookup_table *sync.Map
 var lookup_init sync.Once
 var lookup_init_err error
 
-type SFOMuseumLookupFunc func()
+type SFOMuseumLookupFunc func(context.Context)
 
 type SFOMuseumLookup struct {
 	airlines.Lookup
 }
 
+func init() {
+	ctx := context.Background()
+	airlines.RegisterLookup(ctx, "sfomuseum", NewLookup)
+}
+
 // NewLookup will return an `airlines.Lookup` instance derived from precompiled (embedded) data in `data/sfomuseum.json`
-func NewLookup() (airlines.Lookup, error) {
+func NewLookup(ctx context.Context, uri string) (airlines.Lookup, error) {
 
 	fs := data.FS
 	fh, err := fs.Open("sfomuseum.json")
@@ -32,16 +38,16 @@ func NewLookup() (airlines.Lookup, error) {
 		return nil, fmt.Errorf("Failed to load data, %v", err)
 	}
 
-	lookup_func := NewLookupFuncWithReader(fh)
-	return NewLookupWithLookupFunc(lookup_func)
+	lookup_func := NewLookupFuncWithReader(ctx, fh)
+	return NewLookupWithLookupFunc(ctx, lookup_func)
 }
 
 // NewLookup will return an `SFOMuseumLookupFunc` function instance that, when invoked, will populate an `airlines.Lookup` instance with data stored in `r`.
 // `r` will be closed when the `SFOMuseumLookupFunc` function instance is invoked.
 // It is assumed that the data in `r` will be formatted in the same way as the procompiled (embedded) data stored in `data/sfomuseum.json`.
-func NewLookupFuncWithReader(r io.ReadCloser) SFOMuseumLookupFunc {
+func NewLookupFuncWithReader(ctx context.Context, r io.ReadCloser) SFOMuseumLookupFunc {
 
-	lookup_func := func() {
+	lookup_func := func(ctx context.Context) {
 
 		defer r.Close()
 
@@ -58,6 +64,13 @@ func NewLookupFuncWithReader(r io.ReadCloser) SFOMuseumLookupFunc {
 		table := new(sync.Map)
 
 		for idx, craft := range airline {
+
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				// pass
+			}
 
 			pointer := fmt.Sprintf("pointer:%d", idx)
 			table.Store(pointer, craft)
@@ -113,9 +126,13 @@ func NewLookupFuncWithReader(r io.ReadCloser) SFOMuseumLookupFunc {
 }
 
 // NewLookupWithLookupFunc will return an `airlines.Lookup` instance derived by data compiled using `lookup_func`.
-func NewLookupWithLookupFunc(lookup_func SFOMuseumLookupFunc) (airlines.Lookup, error) {
+func NewLookupWithLookupFunc(ctx context.Context, lookup_func SFOMuseumLookupFunc) (airlines.Lookup, error) {
 
-	lookup_init.Do(lookup_func)
+	fn := func() {
+		lookup_func(ctx)
+	}
+
+	lookup_init.Do(fn)
 
 	if lookup_init_err != nil {
 		return nil, lookup_init_err

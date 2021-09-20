@@ -1,6 +1,7 @@
 # github.com/aaronland/go-json-query v0.1.0
 github.com/aaronland/go-json-query
 # github.com/aaronland/go-roster v0.0.2
+## explicit
 github.com/aaronland/go-roster
 # github.com/hashicorp/errwrap v0.0.0-20141028054710-7554cd9344ce
 github.com/hashicorp/errwrap

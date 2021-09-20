@@ -1,7 +1,9 @@
 package wikipedia
 
+// Do I remember where/how the CSV file that drives this was generated? Of course I don't...
+
 import (
-	"errors"
+	"context"
 	"fmt"
 	"github.com/sfomuseum/go-csvdict"
 	"github.com/sfomuseum/go-sfomuseum-airlines"
@@ -20,7 +22,12 @@ type WikipediaLookup struct {
 	airlines.Lookup
 }
 
-func NewLookup() (airlines.Lookup, error) {
+func init() {
+	ctx := context.Background()
+	airlines.RegisterLookup(ctx, "wikipedia", NewLookup)
+}
+
+func NewLookup(ctx context.Context, uri string) (airlines.Lookup, error) {
 
 	lookup_func := func() {
 
@@ -131,7 +138,7 @@ func (l *WikipediaLookup) Find(code string) ([]interface{}, error) {
 	pointers, ok := lookup_table.Load(code)
 
 	if !ok {
-		return nil, errors.New("Not found")
+		return nil, fmt.Errorf("Code '%s' not found", code)
 	}
 
 	airlines := make([]interface{}, 0)
@@ -139,13 +146,13 @@ func (l *WikipediaLookup) Find(code string) ([]interface{}, error) {
 	for _, p := range pointers.([]string) {
 
 		if !strings.HasPrefix(p, "pointer:") {
-			return nil, errors.New("Invalid pointer")
+			return nil, fmt.Errorf("Invalid pointer '%s'", p)
 		}
 
 		row, ok := lookup_table.Load(p)
 
 		if !ok {
-			return nil, errors.New("Invalid pointer")
+			return nil, fmt.Errorf("Invalid pointer '%s'", p)
 		}
 
 		airlines = append(airlines, row.(*Airline))

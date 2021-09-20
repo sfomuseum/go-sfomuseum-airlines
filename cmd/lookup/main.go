@@ -1,34 +1,26 @@
 package main
 
 import (
-	"errors"
+	_ "github.com/sfomuseum/go-sfomuseum-airlines/flysfo"
+	_ "github.com/sfomuseum/go-sfomuseum-airlines/sfomuseum"
+)
+
+import (
+	"context"
 	"flag"
 	"fmt"
 	"github.com/sfomuseum/go-sfomuseum-airlines"
-	"github.com/sfomuseum/go-sfomuseum-airlines/flysfo"
-	"github.com/sfomuseum/go-sfomuseum-airlines/sfomuseum"
-	"github.com/sfomuseum/go-sfomuseum-airlines/wikipedia"
 	"log"
 )
 
 func main() {
 
-	source := flag.String("source", "wikipedia", "Valid sources are: flysfo,sfomuseum,wikipedia.")
+	lookup_uri := flag.String("lookup-uri", "sfomuseum://", "...")
+
 	flag.Parse()
 
-	var lookup airlines.Lookup
-	var err error
-
-	switch *source {
-	case "flysfo":
-		lookup, err = flysfo.NewLookup()
-	case "sfomuseum":
-		lookup, err = sfomuseum.NewLookup()
-	case "wikipedia":
-		lookup, err = wikipedia.NewLookup()
-	default:
-		err = errors.New("Unknown source")
-	}
+	ctx := context.Background()
+	lookup, err := airlines.NewLookup(ctx, *lookup_uri)
 
 	if err != nil {
 		log.Fatal(err)

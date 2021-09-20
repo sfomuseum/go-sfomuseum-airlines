@@ -38,7 +38,7 @@ func main() {
 
 	wr := io.MultiWriter(writers...)
 
-	lookup, err := flysfo.CompileFlySFOAirlinesData(ctx, *iterator_uri, *iterator_source)
+	lookup, err := flysfo.CompileAirlinesData(ctx, *iterator_uri, *iterator_source)
 
 	if err != nil {
 		log.Fatalf("Failed to compile data, %v", err)

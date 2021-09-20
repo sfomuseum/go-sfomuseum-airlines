@@ -88,13 +88,13 @@ func CompileAirlinesData(ctx context.Context, iterator_uri string, iterator_sour
 
 		seen.Store(iata_code, wof_id)
 
-		sfom_id := utils.Int64Property(f.Bytes(), []string{"properties.sfomuseum:airline_id"}, -1)
+		// sfom_id := utils.Int64Property(f.Bytes(), []string{"properties.sfomuseum:airline_id"}, -1)
 
 		a := Airline{
-			WOFID:       wof_id,
-			SFOMuseumID: int(sfom_id),
-			Name:        name,
-			IATACode:    iata_code,
+			WOFID:    wof_id,
+			FlysfoID: iata_code,
+			Name:     name,
+			IATACode: iata_code,
 		}
 
 		icao_code, ok := concordances["icao:code"]

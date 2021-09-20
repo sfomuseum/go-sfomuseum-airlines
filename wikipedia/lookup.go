@@ -133,7 +133,7 @@ func NewLookup(ctx context.Context, uri string) (airlines.Lookup, error) {
 	return &l, nil
 }
 
-func (l *WikipediaLookup) Find(code string) ([]interface{}, error) {
+func (l *WikipediaLookup) Find(ctx context.Context, code string) ([]interface{}, error) {
 
 	pointers, ok := lookup_table.Load(code)
 
@@ -159,4 +159,8 @@ func (l *WikipediaLookup) Find(code string) ([]interface{}, error) {
 	}
 
 	return airlines, nil
+}
+
+func (l *WikipediaLookup) Append(ctx context.Context, data interface{}) error {
+	return fmt.Errorf("Not implemented")
 }

@@ -48,7 +48,7 @@ func main() {
 	err = enc.Encode(lookup)
 
 	if err != nil {
-		log.Fatalf("Failed to marshal results, %w", err)
+		log.Fatalf("Failed to marshal results, %v", err)
 	}
 
 }

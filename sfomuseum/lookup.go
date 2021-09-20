@@ -11,9 +11,12 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 )
 
 var lookup_table *sync.Map
+var lookup_idx int64
+
 var lookup_init sync.Once
 var lookup_init_err error
 
@@ -26,6 +29,8 @@ type SFOMuseumLookup struct {
 func init() {
 	ctx := context.Background()
 	airlines.RegisterLookup(ctx, "sfomuseum", NewLookup)
+
+	lookup_idx = int64(0)
 }
 
 // NewLookup will return an `airlines.Lookup` instance derived from precompiled (embedded) data in `data/sfomuseum.json`
@@ -63,7 +68,7 @@ func NewLookupFuncWithReader(ctx context.Context, r io.ReadCloser) SFOMuseumLook
 
 		table := new(sync.Map)
 
-		for idx, craft := range airline {
+		for _, data := range airline {
 
 			select {
 			case <-ctx.Done():
@@ -72,51 +77,7 @@ func NewLookupFuncWithReader(ctx context.Context, r io.ReadCloser) SFOMuseumLook
 				// pass
 			}
 
-			pointer := fmt.Sprintf("pointer:%d", idx)
-			table.Store(pointer, craft)
-
-			str_wofid := strconv.FormatInt(craft.WOFID, 10)
-
-			possible_codes := []string{
-				craft.IATACode,
-				craft.ICAOCode,
-				craft.ICAOCallsign,
-				str_wofid,
-			}
-
-			for _, code := range possible_codes {
-
-				if code == "" {
-					continue
-				}
-
-				pointers := make([]string, 0)
-				has_pointer := false
-
-				others, ok := table.Load(code)
-
-				if ok {
-
-					pointers = others.([]string)
-				}
-
-				for _, dupe := range pointers {
-
-					if dupe == pointer {
-						has_pointer = true
-						break
-					}
-				}
-
-				if has_pointer {
-					continue
-				}
-
-				pointers = append(pointers, pointer)
-				table.Store(code, pointers)
-			}
-
-			idx += 1
+			appendData(ctx, table, data)
 		}
 
 		lookup_table = table
@@ -142,7 +103,7 @@ func NewLookupWithLookupFunc(ctx context.Context, lookup_func SFOMuseumLookupFun
 	return &l, nil
 }
 
-func (l *SFOMuseumLookup) Find(code string) ([]interface{}, error) {
+func (l *SFOMuseumLookup) Find(ctx context.Context, code string) ([]interface{}, error) {
 
 	pointers, ok := lookup_table.Load(code)
 
@@ -168,4 +129,61 @@ func (l *SFOMuseumLookup) Find(code string) ([]interface{}, error) {
 	}
 
 	return airline, nil
+}
+
+func (l *SFOMuseumLookup) Append(ctx context.Context, data interface{}) error {
+	return appendData(ctx, lookup_table, data.(*Airline))
+}
+
+func appendData(ctx context.Context, table *sync.Map, data *Airline) error {
+
+	idx := atomic.AddInt64(&lookup_idx, 1)
+
+	pointer := fmt.Sprintf("pointer:%d", idx)
+	table.Store(pointer, data)
+
+	str_wofid := strconv.FormatInt(data.WOFID, 10)
+	str_sfomid := strconv.Itoa(data.SFOMuseumID)
+
+	possible_codes := []string{
+		data.IATACode,
+		data.ICAOCode,
+		data.ICAOCallsign,
+		str_wofid,
+		str_sfomid,
+	}
+
+	for _, code := range possible_codes {
+
+		if code == "" {
+			continue
+		}
+
+		pointers := make([]string, 0)
+		has_pointer := false
+
+		others, ok := table.Load(code)
+
+		if ok {
+
+			pointers = others.([]string)
+		}
+
+		for _, dupe := range pointers {
+
+			if dupe == pointer {
+				has_pointer = true
+				break
+			}
+		}
+
+		if has_pointer {
+			continue
+		}
+
+		pointers = append(pointers, pointer)
+		table.Store(code, pointers)
+	}
+
+	return nil
 }

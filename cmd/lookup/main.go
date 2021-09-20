@@ -28,7 +28,7 @@ func main() {
 
 	for _, code := range flag.Args() {
 
-		results, err := lookup.Find(code)
+		results, err := lookup.Find(ctx, code)
 
 		if err != nil {
 			fmt.Printf("%s *** %s\n", code, err)

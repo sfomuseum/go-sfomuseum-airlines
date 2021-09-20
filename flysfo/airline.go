@@ -1,0 +1,17 @@
+package flysfo
+
+import (
+	"fmt"
+)
+
+type Airline struct {
+	WOFID    int64  `json:"wof:id"`
+	Name     string `json:"wof:name"`
+	FlysfoID int    `json:"flysfo:airline_id"`
+	IATACode string `json:"iata:code,omitempty"`
+	ICAOCode string `json:"icao:code,omitempty"`
+}
+
+func (a *Airline) String() string {
+	return fmt.Sprintf("%s %s \"%s\" %d", a.IATACode, a.ICAOCode, a.Name, a.WOFID)
+}

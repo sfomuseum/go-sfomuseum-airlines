@@ -11,6 +11,8 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"net/url"
+	"net/http"
 )
 
 var lookup_table *sync.Map
@@ -35,15 +37,48 @@ func init() {
 // NewLookup will return an `airlines.Lookup` instance derived from precompiled (embedded) data in `data/sfomuseum.json`
 func NewLookup(ctx context.Context, uri string) (airlines.Lookup, error) {
 
-	fs := data.FS
-	fh, err := fs.Open("sfomuseum.json")
+	u, err := url.Parse(uri)
 
 	if err != nil {
-		return nil, fmt.Errorf("Failed to load data, %v", err)
+		return nil, fmt.Errorf("Failed to parse URI, %w", err)
 	}
 
-	lookup_func := NewLookupFuncWithReader(ctx, fh)
-	return NewLookupWithLookupFunc(ctx, lookup_func)
+	// Reminder: u.Scheme is used by the airlines.Lookup constructor
+	
+	switch u.Host {
+	case "iterator":
+
+		q := u.Query()
+
+		iterator_uri := q.Get("uri")
+		iterator_sources := q["source"]
+
+		return NewLookupFromIterator(ctx, iterator_uri, iterator_sources...)
+		
+	case "github":
+
+		data_url := "https://raw.githubusercontent.com/sfomuseum/go-sfomuseum-airlines/main/data/sfomuseum.json"
+		rsp, err := http.Get(data_url)
+
+		if err != nil {
+			return nil, fmt.Errorf("Failed to load remote data from Github, %w", err)
+		}
+
+		lookup_func := NewLookupFuncWithReader(ctx, rsp.Body)
+		return NewLookupWithLookupFunc(ctx, lookup_func)
+		
+	default:
+		
+		fs := data.FS
+		fh, err := fs.Open("sfomuseum.json")
+		
+		if err != nil {
+			return nil, fmt.Errorf("Failed to load local precompiled data, %w", err)
+		}
+		
+		lookup_func := NewLookupFuncWithReader(ctx, fh)
+		return NewLookupWithLookupFunc(ctx, lookup_func)
+	}
 }
 
 // NewLookup will return an `SFOMuseumLookupFunc` function instance that, when invoked, will populate an `airlines.Lookup` instance with data stored in `r`.

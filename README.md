@@ -4,6 +4,8 @@ Go package for working with airlines, in a SFO Museum context.
 
 ## Documentation
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/sfomuseum/go-sfomuseum-airlines.svg)](https://pkg.go.dev/github.com/sfomuseum/go-sfomuseum-airlines)
+
 Documentation is incomplete.
 
 ## Tools

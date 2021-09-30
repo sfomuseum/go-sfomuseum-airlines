@@ -2,23 +2,10 @@
 
 Go package for working with airlines, in a SFO Museum context.
 
-## Documentation
+## Important
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/sfomuseum/go-sfomuseum-airlines.svg)](https://pkg.go.dev/github.com/sfomuseum/go-sfomuseum-airlines)
+This package has been deprecated and will be archived soon. Equivalent functionality is now part of the [go-sfomuseum-airfield](https://github.com/sfomuseum/go-sfomuseum-airfield) package.
 
-Documentation is incomplete.
+## See also
 
-## Tools
-
-### lookup
-
-Lookup an airline by its IATA, ICAO or TELEPHONY (callsign) code.
-
-```
-$> ./bin/lookup ANZ
-NZ ANZ NEW ZEALAND New Zealand National Airways Corporation 
-TE ANZ NEW ZEALAND Tasman Empire Airways Limited
-
-$> ./bin/lookup AC
-AC ACA AIR CANADA Air Canada
-```
+* https://github.com/sfomuseum/go-sfomuseum-airfield
